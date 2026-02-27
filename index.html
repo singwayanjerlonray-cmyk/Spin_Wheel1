@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Student Destiny Wheel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #FFD700;
+    --gold2: #FFA500;
+    --glow: #ff6ec7;
+    --purple: #6c3ce1;
+    --deep: #0a0014;
+    --card-bg: rgba(255,255,255,0.05);
+    --border: rgba(255,215,0,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--deep);
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Starfield */
+  #stars { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .star {
+    position:absolute; border-radius:50%;
+    background:#fff; animation: twinkle 3s infinite alternate;
+  }
+  @keyframes twinkle {
+    0%{opacity:0.2; transform:scale(1);}
+    100%{opacity:1; transform:scale(1.4);}
+  }
+
+  /* Nebula bg */
+  body::before {
+    content:''; position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(108,60,225,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(255,110,199,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 50%, rgba(0,180,255,0.1) 0%, transparent 70%),
+      #0a0014;
+  }
+
+  .page { position:relative; z-index:1; }
+
+  /* ===== HEADER ===== */
+  header {
+    text-align:center;
+    padding: 36px 20px 10px;
+  }
+  .header-emoji { font-size: 2.8rem; display:block; margin-bottom:8px; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+
+  header h1 {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: clamp(1.4rem, 5vw, 2.6rem);
+    background: linear-gradient(135deg, #FFD700, #ff6ec7, #00d4ff, #FFD700);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s linear infinite;
+    line-height: 1.3;
+    text-shadow: none;
+  }
+  @keyframes shimmer { 0%{background-position:0%} 100%{background-position:300%} }
+
+  header p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.95rem;
+    margin-top: 8px;
+    font-weight: 300;
+  }
+
+  /* ===== FORM ===== */
+  .form-section {
+    max-width: 480px;
+    margin: 28px auto 0;
+    padding: 0 20px;
+  }
+
+  .input-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .name-input {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .name-input::placeholder { color: rgba(255,255,255,0.25); font-weight: 400; }
+  .name-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(255,215,0,0.2);
+  }
+
+  .gender-section { margin-top: 20px; }
+  .gender-label { font-size: 0.8rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); display:block; margin-bottom:12px; }
+  .gender-options { display:flex; gap:12px; flex-wrap:wrap; }
+  .gender-option {
+    flex:1; min-width:90px;
+    position:relative;
+  }
+  .gender-option input { position:absolute; opacity:0; width:0; height:0; }
+  .gender-option label {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 14px 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    cursor:pointer;
+    transition: all 0.3s;
+    font-weight: 700;
+    font-size: 0.88rem;
+    gap: 6px;
+  }
+  .gender-option label .emoji { font-size:1.6rem; }
+  .gender-option input:checked + label {
+    background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,110,199,0.2));
+    border-color: var(--gold);
+    box-shadow: 0 0 18px rgba(255,215,0,0.3);
+    color: var(--gold);
+  }
+  .gender-option label:hover {
+    border-color: rgba(255,215,0,0.5);
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* ===== SPIN BUTTON ===== */
+  .spin-btn {
+    display:block; width:100%; margin-top:24px;
+    padding: 18px;
+    background: linear-gradient(135deg, #FFD700, #FF6EC7, #6c3ce1);
+    background-size: 200%;
+    border:none; border-radius: 18px;
+    font-family:'Nunito',sans-serif; font-size:1.15rem; font-weight:900;
+    color:#fff; cursor:pointer;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    transition: all 0.3s;
+    box-shadow: 0 8px 32px rgba(255,215,0,0.3);
+    animation: btnPulse 2s ease-in-out infinite;
+  }
+  @keyframes btnPulse {
+    0%,100%{box-shadow: 0 8px 32px rgba(255,215,0,0.3);}
+    50%{box-shadow: 0 8px 48px rgba(255,110,199,0.5);}
+  }
+  .spin-btn:hover { transform:translateY(-3px) scale(1.02); background-position:100%; }
+  .spin-btn:active { transform:scale(0.98); }
+  .spin-btn:disabled { opacity:0.5; pointer-events:none; }
+
+  /* ===== WHEEL SECTION ===== */
+  #wheel-section {
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    padding: 30px 20px;
+    position:relative;
+  }
+
+  .wheel-title {
+    font-family:'Cinzel Decorative',cursive;
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing:3px;
+    margin-bottom: 30px;
+    text-align:center;
+    animation: shimmer 3s linear infinite;
+    background: linear-gradient(135deg,#FFD700,#ff6ec7,#00d4ff);
+    background-size:300%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .wheel-wrap {
+    position:relative;
+    width: min(340px, 90vw);
+    height: min(340px, 90vw);
+  }
+
+  /* Glow ring */
+  .wheel-wrap::before {
+    content:'';
+    position:absolute; inset:-8px;
+    border-radius:50%;
+    background: conic-gradient(#FFD700, #ff6ec7, #6c3ce1, #00d4ff, #FFD700);
+    animation: spinRing 4s linear infinite;
+    filter: blur(2px);
+    z-index:0;
+  }
+  @keyframes spinRing { to{transform:rotate(360deg);} }
+
+  canvas#wheel {
+    border-radius:50%;
+    position:relative; z-index:1;
+    width:100%; height:100%;
+  }
+
+  /* Pointer */
+  .wheel-pointer {
+    position:absolute; top:-18px; left:50%;
+    transform:translateX(-50%);
+    width:0; height:0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 32px solid #FFD700;
+    filter: drop-shadow(0 0 8px #FFD700);
+    z-index:3;
+  }
+
+  .wheel-center {
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:52px; height:52px;
+    background: linear-gradient(135deg,#FFD700,#FF6EC7);
+    border-radius:50%;
+    z-index:3;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem;
+    box-shadow: 0 0 20px rgba(255,215,0,0.6);
+  }
+
+  /* ===== RESULTS ===== */
+  #results-section {
+    display:none;
+    max-width:520px;
+    margin:0 auto;
+    padding:24px 20px 60px;
+  }
+
+  .destiny-banner {
+    text-align:center;
+    margin-bottom:28px;
+  }
+  .destiny-banner h2 {
+    font-family:'Cinzel Decorative',cursive;
+    font-size: clamp(1.1rem,4vw,1.6rem);
+    background: linear-gradient(135deg,#FFD700,#ff6ec7,#00d4ff);
+    background-size:300%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    animation: shimmer 3s linear infinite;
+    margin-bottom:6px;
+  }
+  .destiny-banner .name-display {
+    font-size:1.7rem; font-weight:900;
+    color:#fff;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  }
+
+  .dest-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius:20px;
+    padding: 20px;
+    margin-bottom:16px;
+    opacity:0;
+    transform:translateY(30px);
+    transition: opacity 0.6s, transform 0.6s;
+    position:relative;
+    overflow:hidden;
+    backdrop-filter: blur(10px);
+  }
+  .dest-card.visible { opacity:1; transform:translateY(0); }
+  .dest-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg,transparent,var(--gold),var(--glow),transparent);
+  }
+
+  .card-header {
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:12px;
+  }
+  .card-icon {
+    width:44px; height:44px;
+    background: linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,110,199,0.2));
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem;
+    flex-shrink:0;
+    border:1px solid rgba(255,215,0,0.3);
+  }
+  .card-title {
+    font-size:0.72rem;
+    font-weight:800;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:rgba(255,215,0,0.7);
+  }
+  .card-content {
+    font-size:1.05rem;
+    font-weight:700;
+    color:#fff;
+    line-height:1.5;
+  }
+  .card-sub {
+    font-size:0.88rem;
+    color:rgba(255,255,255,0.6);
+    margin-top:6px;
+    font-weight:400;
+    line-height:1.6;
+  }
+  .highlight {
+    color:var(--gold);
+    font-weight:800;
+  }
+  .badge {
+    display:inline-block;
+    background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(108,60,225,0.3));
+    border:1px solid rgba(255,215,0,0.4);
+    border-radius:30px;
+    padding:3px 12px;
+    font-size:0.8rem;
+    font-weight:700;
+    margin:3px 3px 0 0;
+    color:var(--gold);
+  }
+
+  /* ===== RESTART ===== */
+  .restart-btn {
+    display:block; width:100%; margin-top:28px;
+    padding:16px;
+    background:transparent;
+    border:2px solid var(--gold);
+    border-radius:16px;
+    font-family:'Nunito',sans-serif;
+    font-size:1rem; font-weight:800;
+    color:var(--gold);
+    cursor:pointer;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    transition:all 0.3s;
+  }
+  .restart-btn:hover {
+    background:rgba(255,215,0,0.1);
+    box-shadow:0 0 20px rgba(255,215,0,0.3);
+  }
+
+  /* ===== CONFETTI ===== */
+  #confetti-canvas {
+    position:fixed; inset:0; pointer-events:none; z-index:999;
+  }
+
+  /* ===== LOADING STATE ===== */
+  .spinning-text {
+    font-size:1rem; font-weight:700;
+    color:rgba(255,255,255,0.7);
+    margin-top:20px;
+    letter-spacing:2px;
+    animation: blink 0.8s infinite alternate;
+  }
+  @keyframes blink { to{opacity:0.3;} }
+
+  /* ===== DISCLAIMER ===== */
+  .disclaimer {
+    text-align:center;
+    font-size:0.72rem;
+    color:rgba(255,255,255,0.25);
+    padding:0 20px 30px;
+    line-height:1.8;
+  }
+
+  /* Celebration ring */
+  @keyframes celebrationPop {
+    0%{transform:scale(0.5);opacity:0;}
+    60%{transform:scale(1.1);opacity:1;}
+    100%{transform:scale(1);opacity:1;}
+  }
+  .destiny-banner { animation:celebrationPop 0.7s cubic-bezier(.36,1.56,.64,1) both; }
+
+  /* Error msg */
+  .error-msg {
+    color:#ff6b6b;
+    font-size:0.85rem;
+    font-weight:700;
+    margin-top:8px;
+    display:none;
+    text-align:center;
+  }
+
+  /* ============================================================
+     INTRO SCREEN
+  ============================================================ */
+  #intro-screen {
+    position:fixed; inset:0; z-index:9999;
+    background:#000;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+
+  /* Background canvas for particle nebula */
+  #intro-canvas {
+    position:absolute; inset:0; z-index:0;
+  }
+
+  /* Intro scenes */
+  .intro-scene {
+    position:absolute; inset:0; z-index:2;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:30px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.8s ease;
+  }
+  .intro-scene.active { opacity:1; }
+
+  /* Scene 1 — Logo reveal */
+  .intro-logo {
+    font-family:'Cinzel Decorative',cursive;
+    font-size:clamp(0.9rem,4vw,1.8rem);
+    text-align:center;
+    letter-spacing:4px;
+    line-height:1.6;
+  }
+  .intro-logo .line1 {
+    display:block;
+    background:linear-gradient(90deg,#FFD700,#fff,#FFD700);
+    background-size:300%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    animation:shimmer 3s linear infinite;
+    opacity:0;
+    transform:translateY(30px);
+    transition:opacity 0.9s ease, transform 0.9s ease;
+  }
+  .intro-logo .line1.show { opacity:1; transform:translateY(0); }
+  .intro-logo .line2 {
+    display:block;
+    font-size:clamp(1.6rem,7vw,3.5rem);
+    background:linear-gradient(135deg,#FFD700,#ff6ec7,#00d4ff);
+    background-size:300%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    animation:shimmer 2s linear infinite;
+    opacity:0;
+    transform:scale(0.7);
+    transition:opacity 1s ease 0.4s, transform 1s cubic-bezier(.36,1.56,.64,1) 0.4s;
+  }
+  .intro-logo .line2.show { opacity:1; transform:scale(1); }
+
+  .intro-tagline {
+    margin-top:22px;
+    font-size:clamp(0.85rem,2.5vw,1.1rem);
+    color:rgba(255,255,255,0.7);
+    font-weight:300;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    opacity:0;
+    transform:translateY(20px);
+    transition:opacity 0.8s ease 0.8s, transform 0.8s ease 0.8s;
+    text-align:center;
+  }
+  .intro-tagline.show { opacity:1; transform:translateY(0); }
+
+  /* Orbiting ring decoration */
+  .orbit-ring {
+    position:absolute;
+    border-radius:50%;
+    border:1px solid rgba(255,215,0,0.2);
+    animation:orbitSpin linear infinite;
+    pointer-events:none;
+  }
+  @keyframes orbitSpin { to{transform:rotate(360deg);} }
+  .orbit-ring .dot {
+    position:absolute; top:-4px; left:50%;
+    transform:translateX(-50%);
+    width:8px; height:8px;
+    border-radius:50%;
+    background:#FFD700;
+    box-shadow:0 0 12px #FFD700;
+  }
+
+  /* Scene 2 — Motivational slides */
+  .motiv-slide {
+    text-align:center;
+    max-width:600px;
+  }
+  .motiv-big-emoji {
+    font-size:clamp(3rem,12vw,6rem);
+    display:block;
+    margin-bottom:20px;
+    animation:popIn 0.7s cubic-bezier(.36,1.56,.64,1) both;
+    filter:drop-shadow(0 0 30px rgba(255,215,0,0.5));
+  }
+  @keyframes popIn {
+    0%{transform:scale(0); opacity:0;}
+    100%{transform:scale(1); opacity:1;}
+  }
+  .motiv-heading {
+    font-family:'Cinzel Decorative',cursive;
+    font-size:clamp(1.1rem,4.5vw,2rem);
+    background:linear-gradient(135deg,#FFD700,#ff6ec7);
+    background-size:300%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    animation:shimmer 3s linear infinite;
+    margin-bottom:14px;
+    opacity:0;
+    transform:translateY(20px);
+    transition:opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+    line-height:1.4;
+  }
+  .motiv-heading.show { opacity:1; transform:translateY(0); }
+  .motiv-body {
+    font-size:clamp(0.88rem,2.5vw,1.1rem);
+    color:rgba(255,255,255,0.75);
+    font-weight:400;
+    line-height:1.8;
+    max-width:480px;
+    margin:0 auto;
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity 0.7s ease 0.5s, transform 0.7s ease 0.5s;
+  }
+  .motiv-body.show { opacity:1; transform:translateY(0); }
+  .motiv-gold-line {
+    width:60px; height:2px;
+    background:linear-gradient(90deg,transparent,#FFD700,transparent);
+    margin:20px auto;
+    opacity:0;
+    transition:opacity 0.6s ease 0.9s, width 0.8s ease 0.9s;
+  }
+  .motiv-gold-line.show { opacity:1; width:160px; }
+
+  /* Scene 3 — Category preview */
+  .preview-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    max-width:440px;
+    width:100%;
+    margin-top:10px;
+  }
+  .preview-item {
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,215,0,0.25);
+    border-radius:16px;
+    padding:16px 10px;
+    text-align:center;
+    opacity:0;
+    transform:translateY(20px) scale(0.9);
+    transition:opacity 0.5s ease, transform 0.5s ease;
+  }
+  .preview-item.show { opacity:1; transform:translateY(0) scale(1); }
+  .preview-item .pi-emoji { font-size:1.8rem; display:block; margin-bottom:6px; }
+  .preview-item .pi-text { font-size:0.75rem; font-weight:700; color:rgba(255,215,0,0.8); letter-spacing:1px; }
+
+  /* Scene final — CTA */
+  .cta-btn-intro {
+    margin-top:32px;
+    padding:16px 44px;
+    background:linear-gradient(135deg,#FFD700,#FF6EC7,#6c3ce1);
+    background-size:200%;
+    border:none; border-radius:50px;
+    font-family:'Nunito',sans-serif;
+    font-size:1.05rem; font-weight:900;
+    color:#fff; cursor:pointer;
+    letter-spacing:1px; text-transform:uppercase;
+    box-shadow:0 10px 40px rgba(255,215,0,0.4);
+    animation:btnPulse2 2s ease-in-out infinite, slideUpFade 0.8s ease 0.4s both;
+    position:relative; overflow:hidden;
+  }
+  @keyframes btnPulse2 {
+    0%,100%{box-shadow:0 10px 40px rgba(255,215,0,0.4);}
+    50%{box-shadow:0 10px 60px rgba(255,110,199,0.6);}
+  }
+  @keyframes slideUpFade {
+    from{opacity:0; transform:translateY(30px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .cta-btn-intro::before {
+    content:'';
+    position:absolute; top:-50%; left:-60%;
+    width:40%; height:200%;
+    background:rgba(255,255,255,0.25);
+    transform:skewX(-20deg);
+    animation:btnShine 3s ease-in-out infinite 1s;
+  }
+  @keyframes btnShine {
+    0%{left:-60%} 50%{left:120%} 100%{left:120%}
+  }
+  .cta-btn-intro:hover { transform:translateY(-3px) scale(1.05); }
+
+  /* Progress dots */
+  .intro-dots {
+    position:absolute; bottom:30px; z-index:10;
+    display:flex; gap:8px; align-items:center;
+  }
+  .intro-dot {
+    width:6px; height:6px; border-radius:3px;
+    background:rgba(255,255,255,0.25);
+    transition:all 0.4s ease;
+  }
+  .intro-dot.active {
+    width:22px; background:#FFD700;
+    box-shadow:0 0 8px #FFD700;
+  }
+
+  /* Skip button */
+  .skip-intro {
+    position:absolute; top:20px; right:20px; z-index:20;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:30px;
+    padding:8px 18px;
+    font-family:'Nunito',sans-serif;
+    font-size:0.8rem; font-weight:700;
+    color:rgba(255,255,255,0.5);
+    cursor:pointer;
+    letter-spacing:1px;
+    transition:all 0.3s;
+    opacity:0;
+    animation:fadeIn 1s ease 2s both;
+  }
+  @keyframes fadeIn { to{opacity:1;} }
+  .skip-intro:hover {
+    background:rgba(255,255,255,0.15);
+    color:#fff;
+    border-color:rgba(255,215,0,0.4);
+  }
+
+  /* Shooting star */
+  .shooting-star {
+    position:absolute;
+    width:2px;
+    background:linear-gradient(90deg,rgba(255,255,255,0),#FFD700,rgba(255,255,255,0));
+    border-radius:2px;
+    animation:shoot linear forwards;
+    pointer-events:none;
+    z-index:1;
+  }
+  @keyframes shoot {
+    0%{opacity:0; transform:translateX(0) translateY(0);}
+    10%{opacity:1;}
+    90%{opacity:1;}
+    100%{opacity:0; transform:translateX(300px) translateY(150px);}
+  }
+
+  /* Intro exit */
+  #intro-screen.exit {
+    animation:introExit 1s cubic-bezier(0.7,0,0.3,1) forwards;
+  }
+  @keyframes introExit {
+    0%{opacity:1; transform:scale(1);}
+    100%{opacity:0; transform:scale(1.08);}
+  }
+
+  /* Floating particles in intro */
+  .intro-particle {
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:1;
+    animation:floatPart linear infinite;
+  }
+  @keyframes floatPart {
+    0%{transform:translateY(100vh) rotate(0deg); opacity:0;}
+    10%{opacity:1;}
+    90%{opacity:1;}
+    100%{transform:translateY(-100px) rotate(720deg); opacity:0;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+<div id="stars"></div>
+
+<!-- ============================================================
+     INTRO SCREEN
+============================================================ -->
+<div id="intro-screen">
+  <canvas id="intro-canvas"></canvas>
+  <button class="skip-intro" onclick="skipIntro()">SKIP ›</button>
+
+  <!-- Orbit rings -->
+  <div class="orbit-ring" style="width:220px;height:220px;animation-duration:12s;">
+    <div class="dot" style="background:#FFD700;box-shadow:0 0 12px #FFD700;"></div>
+  </div>
+  <div class="orbit-ring" style="width:340px;height:340px;animation-duration:18s;animation-direction:reverse;border-color:rgba(255,110,199,0.15);">
+    <div class="dot" style="background:#ff6ec7;box-shadow:0 0 12px #ff6ec7;"></div>
+  </div>
+  <div class="orbit-ring" style="width:460px;height:460px;animation-duration:26s;border-color:rgba(0,212,255,0.1);">
+    <div class="dot" style="background:#00d4ff;box-shadow:0 0 12px #00d4ff;width:5px;height:5px;top:-2.5px;"></div>
+  </div>
+
+  <!-- SCENE 1: Logo -->
+  <div class="intro-scene" id="scene-1">
+    <div style="text-align:center; position:relative; z-index:5;">
+      <div style="font-size:clamp(3rem,12vw,5.5rem); margin-bottom:16px; animation:float 3s ease-in-out infinite; filter:drop-shadow(0 0 40px rgba(255,215,0,0.6));">🌟</div>
+      <div class="intro-logo">
+        <span class="line1" id="logo-line1">WELCOME TO</span>
+        <span class="line2" id="logo-line2">Student Destiny<br>Wheel</span>
+      </div>
+      <div class="intro-tagline" id="logo-tagline">Your future is written in the stars ✨</div>
+    </div>
+  </div>
+
+  <!-- SCENE 2A: Motivational -->
+  <div class="intro-scene" id="scene-2a">
+    <div class="motiv-slide">
+      <span class="motiv-big-emoji" id="motiv-emoji-a">🚀</span>
+      <h2 class="motiv-heading" id="motiv-head-a">Every Great Journey<br>Begins With a Dream</h2>
+      <div class="motiv-gold-line" id="motiv-line-a"></div>
+      <p class="motiv-body" id="motiv-body-a">
+        You are not just a student. You are a future doctor, engineer, entrepreneur, creator — a force that will shape the world. <strong style="color:#FFD700">Believe in your potential.</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 2B: Motivational -->
+  <div class="intro-scene" id="scene-2b">
+    <div class="motiv-slide">
+      <span class="motiv-big-emoji" id="motiv-emoji-b">💎</span>
+      <h2 class="motiv-heading" id="motiv-head-b">Success Isn't<br>Reserved for a Few</h2>
+      <div class="motiv-gold-line" id="motiv-line-b"></div>
+      <p class="motiv-body" id="motiv-body-b">
+        The world's greatest minds started exactly where you are — unsure, yet determined. <strong style="color:#ff6ec7">Your story is still being written.</strong> Make it extraordinary.
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 2C: Motivational -->
+  <div class="intro-scene" id="scene-2c">
+    <div class="motiv-slide">
+      <span class="motiv-big-emoji" id="motiv-emoji-c">🌍</span>
+      <h2 class="motiv-heading" id="motiv-head-c">The World Is Waiting<br>For Someone Like You</h2>
+      <div class="motiv-gold-line" id="motiv-line-c"></div>
+      <p class="motiv-body" id="motiv-body-c">
+        Countries, stages, boardrooms, hospitals, oceans — your destiny will take you places you've only dreamed of. <strong style="color:#00d4ff">You are meant for more.</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 3: Preview what's inside -->
+  <div class="intro-scene" id="scene-3">
+    <div style="text-align:center; width:100%; max-width:460px;">
+      <div style="font-family:'Cinzel Decorative',cursive; font-size:clamp(0.85rem,3vw,1.1rem); color:rgba(255,215,0,0.9); letter-spacing:3px; margin-bottom:20px; text-transform:uppercase;">Discover Your Destiny</div>
+      <div class="preview-grid" style="margin:0 auto;">
+        <div class="preview-item" id="pi-1"><span class="pi-emoji">💼</span><span class="pi-text">Career & Skills</span></div>
+        <div class="preview-item" id="pi-2"><span class="pi-emoji">🎓</span><span class="pi-text">Study Abroad</span></div>
+        <div class="preview-item" id="pi-3"><span class="pi-emoji">🏆</span><span class="pi-text">Big Win</span></div>
+        <div class="preview-item" id="pi-4"><span class="pi-emoji">❤️</span><span class="pi-text">Love Life</span></div>
+        <div class="preview-item" id="pi-5"><span class="pi-emoji">🏠</span><span class="pi-text">Dream Home</span></div>
+        <div class="preview-item" id="pi-6"><span class="pi-emoji">🌟</span><span class="pi-text">Your Destiny</span></div>
+      </div>
+      <button class="cta-btn-intro" onclick="skipIntro()">
+        🎡 Spin My Destiny!
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress dots -->
+  <div class="intro-dots">
+    <div class="intro-dot active" id="dot-0"></div>
+    <div class="intro-dot" id="dot-1"></div>
+    <div class="intro-dot" id="dot-2"></div>
+    <div class="intro-dot" id="dot-3"></div>
+    <div class="intro-dot" id="dot-4"></div>
+  </div>
+</div>
+
+<div class="page">
+  <!-- LANDING -->
+  <div id="landing-section">
+    <header>
+      <span class="header-emoji">🌟</span>
+      <h1>Student Destiny<br>Wheel</h1>
+      <p>Discover what the universe has planned for you ✨</p>
+    </header>
+
+    <div class="form-section">
+      <label class="input-label" for="nameInput">✦ Enter Your Name</label>
+      <input
+        type="text"
+        id="nameInput"
+        class="name-input"
+        placeholder="e.g. John D. Santos Jr."
+        autocomplete="off"
+      />
+      <div class="error-msg" id="errorMsg">⚠️ Please enter your name first!</div>
+
+      <div class="gender-section">
+        <span class="gender-label">✦ Select Your Gender</span>
+        <div class="gender-options">
+          <div class="gender-option">
+            <input type="radio" name="gender" id="male" value="male">
+            <label for="male"><span class="emoji">👨</span>Male</label>
+          </div>
+          <div class="gender-option">
+            <input type="radio" name="gender" id="female" value="female" checked>
+            <label for="female"><span class="emoji">👩</span>Female</label>
+          </div>
+          <div class="gender-option">
+            <input type="radio" name="gender" id="others" value="others">
+            <label for="others"><span class="emoji">🌈</span>Others</label>
+          </div>
+        </div>
+      </div>
+
+      <button class="spin-btn" onclick="startSpin()">🎡 Spin My Destiny!</button>
+    </div>
+
+    <div style="text-align:center;margin-top:30px;padding:0 20px;">
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.3);line-height:1.8;">
+        🔮 Enter your first name, surname, or initials (e.g. "K.", "F.L.", "Ma. Joy", "Santos Jr.")<br>
+        🎯 Your destiny is written in the stars — for entertainment only!
+      </p>
+    </div>
+  </div>
+
+  <!-- WHEEL SECTION -->
+  <div id="wheel-section" style="display:none">
+    <div class="wheel-title">▸ THE WHEEL OF DESTINY SPINS ◂</div>
+    <div class="wheel-wrap">
+      <div class="wheel-pointer"></div>
+      <canvas id="wheel" width="340" height="340"></canvas>
+      <div class="wheel-center">🌟</div>
+    </div>
+    <div class="spinning-text" id="spinningText">Consulting the universe...</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-section">
+    <div class="destiny-banner">
+      <h2>🎉 Destiny Revealed! 🎉</h2>
+      <div class="name-display" id="displayName"></div>
+    </div>
+    <div id="cards-container"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Spin Again</button>
+  </div>
+
+  <div class="disclaimer">
+    For fun & motivation only · Not a real prediction · Believe in yourself 💫
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STARFIELD
+// ============================================================
+(function(){
+  const s=document.getElementById('stars');
+  for(let i=0;i<120;i++){
+    const d=document.createElement('div');
+    d.className='star';
+    const sz=Math.random()*2.5+0.5;
+    d.style.cssText=`
+      width:${sz}px;height:${sz}px;
+      top:${Math.random()*100}%;left:${Math.random()*100}%;
+      animation-delay:${Math.random()*3}s;
+      animation-duration:${2+Math.random()*3}s;
+      opacity:${Math.random()*0.7+0.1};
+    `;
+    s.appendChild(d);
+  }
+})();
+
+// ============================================================
+// WHEEL CONFIG
+// ============================================================
+const SEGMENTS = [
+  { label:'🌟 Shining\nStar',    color:'#6c3ce1' },
+  { label:'💎 Elite\nPath',      color:'#c0392b' },
+  { label:'🚀 Sky\'s\nthe Limit',color:'#0d6efd' },
+  { label:'🎯 Destiny\nCalling', color:'#e67e22' },
+  { label:'🌈 Bright\nFuture',   color:'#16a085' },
+  { label:'💫 Star\nPower',      color:'#8e44ad' },
+  { label:'🔥 Rising\nStar',     color:'#c0392b' },
+  { label:'✨ Chosen\nOne',      color:'#2c3e50' },
+  { label:'👑 Royalty\nPath',    color:'#d4ac0d' },
+  { label:'⚡ Thunder\nBolt',    color:'#1abc9c' },
+];
+
+function drawWheel(rotation) {
+  const canvas = document.getElementById('wheel');
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width/2, cy = canvas.height/2, r = cx - 4;
+  const arc = (2*Math.PI)/SEGMENTS.length;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  SEGMENTS.forEach((seg,i)=>{
+    const start = rotation + i*arc;
+    const end = start + arc;
+    // Slice
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,start,end);
+    ctx.closePath();
+    ctx.fillStyle = seg.color;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Text
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(start + arc/2);
+    ctx.textAlign='right';
+    ctx.fillStyle='rgba(255,255,255,0.95)';
+    const lines = seg.label.split('\n');
+    const fs = canvas.width < 300 ? 9 : 11;
+    ctx.font = `bold ${fs}px Nunito, sans-serif`;
+    lines.forEach((line,li)=>{
+      ctx.fillText(line, r-12, (li - (lines.length-1)/2)*15 + 4);
+    });
+    ctx.restore();
+  });
+
+  // Center circle cover
+  ctx.beginPath();
+  ctx.arc(cx,cy,30,0,2*Math.PI);
+  ctx.fillStyle='#0a0014';
+  ctx.fill();
+  ctx.strokeStyle='rgba(255,215,0,0.4)';
+  ctx.lineWidth=2; ctx.stroke();
+}
+
+// ============================================================
+// DATA POOLS
+// ============================================================
+const STUDY_COUNTRIES = [
+  { country:'United States', city:'New York / Boston', school:'an Ivy League University' },
+  { country:'United Kingdom', city:'London / Edinburgh', school:'a Russell Group University' },
+  { country:'Canada', city:'Toronto / Vancouver', school:'a top Canadian University' },
+  { country:'Australia', city:'Sydney / Melbourne', school:'a Group of Eight University' },
+  { country:'Japan', city:'Tokyo / Osaka', school:'a prestigious Japanese University' },
+  { country:'Singapore', city:'Singapore', school:'NUS or NTU' },
+  { country:'Germany', city:'Munich / Berlin', school:'a top TU University' },
+  { country:'France', city:'Paris', school:'a Grande École' },
+  { country:'Switzerland', city:'Zurich / Geneva', school:'ETH Zurich or EPFL' },
+  { country:'Netherlands', city:'Amsterdam / Rotterdam', school:'a leading Dutch University' },
+  { country:'New Zealand', city:'Auckland / Wellington', school:'a top New Zealand University' },
+  { country:'UAE', city:'Dubai / Abu Dhabi', school:'an international campus university' },
+  { country:'South Korea', city:'Seoul / Busan', school:'a SKY University' },
+  { country:'Ireland', city:'Dublin / Cork', school:'Trinity College or UCD' },
+];
+
+const LIVE_COUNTRIES = [
+  'United States 🇺🇸','Canada 🇨🇦','United Kingdom 🇬🇧','Australia 🇦🇺','Japan 🇯🇵',
+  'Singapore 🇸🇬','Germany 🇩🇪','Switzerland 🇨🇭','UAE (Dubai) 🇦🇪','New Zealand 🇳🇿',
+  'South Korea 🇰🇷','France 🇫🇷','Netherlands 🇳🇱','Ireland 🇮🇪','Sweden 🇸🇪',
+  'Norway 🇳🇴','Denmark 🇩🇰','Finland 🇫🇮','Austria 🇦🇹','Hong Kong 🇭🇰',
+];
+
+const LOVE_ORIGINS = [
+  'the Philippines 🇵🇭','the United States 🇺🇸','the United Kingdom 🇬🇧','Japan 🇯🇵',
+  'South Korea 🇰🇷','Australia 🇦🇺','Brazil 🇧🇷','Italy 🇮🇹','France 🇫🇷',
+  'Canada 🇨🇦','Spain 🇪🇸','Mexico 🇲🇽','India 🇮🇳','Germany 🇩🇪',
+  'New Zealand 🇳🇿','Singapore 🇸🇬','Hong Kong 🇭🇰','Taiwan 🇹🇼','Thailand 🇹🇭',
+];
+
+const EX_COUNT_LINES = [
+  'You will have 0 ex — you meet your soulmate on the first try. Pure fairy tale. 🌸',
+  'You will have 1 ex — a learning experience that shaped who you become. 📖',
+  'You will have 1 ex — a deep connection that wasn\'t meant to last. 💫',
+  'You will have 2 exes — each one teaches you something important. 🌿',
+  'You will have 2 exes — short romances before the real one arrives. 🌹',
+  'You will have 3 exes — but you grow stronger with every chapter. 💪',
+  'You will have 3 exes — the journey to love is scenic but worth it. 🗺️',
+];
+
+const NEVER_MARRY = 'You will NEVER marry — but you will live a full, exciting life full of adventure, deep friendships, and personal freedom. Your love story is with the world. 🌍';
+
+const PROFESSIONS_100 = [
+  { job:'Software Developer', skill:'Full-Stack Development, Cloud Architecture' },
+  { job:'Graphic Designer', skill:'Visual Branding, Adobe Creative Suite, Motion Graphics' },
+  { job:'Marketing Manager', skill:'Brand Strategy, Digital Marketing, Analytics' },
+  { job:'High School Teacher', skill:'Curriculum Design, Educational Leadership, Mentoring' },
+  { job:'Certified Accountant', skill:'Financial Reporting, Tax Advisory, Audit' },
+  { job:'Architect', skill:'Sustainable Design, AutoCAD, Urban Planning' },
+  { job:'Executive Chef', skill:'Culinary Arts, Menu Innovation, Kitchen Leadership' },
+  { job:'Pharmacist', skill:'Clinical Pharmacy, Drug Counseling, Patient Care' },
+  { job:'Physiotherapist', skill:'Rehabilitation, Sports Therapy, Manual Therapy' },
+  { job:'Corporate Lawyer', skill:'Contract Law, Business Litigation, Negotiation' },
+  { job:'Financial Analyst', skill:'Portfolio Management, Investment Research, Excel Modeling' },
+  { job:'Data Scientist', skill:'Machine Learning, Python, Statistical Analysis' },
+  { job:'Civil Engineer', skill:'Structural Design, Project Management, AutoCAD' },
+  { job:'Electrical Engineer', skill:'Power Systems, Circuit Design, Automation' },
+  { job:'Mechanical Engineer', skill:'CAD Modeling, Product Development, Thermodynamics' },
+  { job:'Industrial Designer', skill:'Product Design, Prototyping, UX Research' },
+  { job:'Veterinarian', skill:'Animal Surgery, Diagnostics, Exotic Pet Care' },
+  { job:'Dentist', skill:'Cosmetic Dentistry, Orthodontics, Oral Surgery' },
+  { job:'Psychologist', skill:'Cognitive Behavioral Therapy, Counseling, Research' },
+  { job:'Social Worker', skill:'Case Management, Community Outreach, Crisis Intervention' },
+  { job:'Broadcast Journalist', skill:'News Anchoring, Investigative Reporting, Media Production' },
+  { job:'Photographer & Filmmaker', skill:'Commercial Photography, Video Production, Lighting' },
+  { job:'Film Director', skill:'Storytelling, Script Writing, Film Production' },
+  { job:'Stage & Film Actor', skill:'Character Development, Voice Acting, Stage Performance' },
+  { job:'Professional Musician', skill:'Composition, Music Production, Live Performance' },
+  { job:'Fashion Designer', skill:'Textile Design, Fashion Illustration, Brand Building' },
+  { job:'Interior Designer', skill:'Space Planning, 3D Visualization, Client Management' },
+  { job:'Real Estate Broker', skill:'Property Sales, Market Analysis, Client Relations' },
+  { job:'HR Manager', skill:'Talent Acquisition, Organizational Development, Labor Law' },
+  { job:'Supply Chain Manager', skill:'Logistics Optimization, Procurement, ERP Systems' },
+  { job:'Senior Project Manager', skill:'Agile Methodology, Risk Management, Stakeholder Comm.' },
+  { job:'Business Analyst', skill:'Process Improvement, Requirements Analysis, Data Mapping' },
+  { job:'UX/UI Designer', skill:'Figma, User Research, Prototyping, Accessibility Design' },
+  { job:'Web Developer', skill:'React, Node.js, TypeScript, Performance Optimization' },
+  { job:'Mobile App Developer', skill:'iOS & Android Development, Flutter, App Monetization' },
+  { job:'Cybersecurity Analyst', skill:'Penetration Testing, Threat Detection, SOC Operations' },
+  { job:'Cloud Solutions Architect', skill:'AWS, Azure, DevOps, Infrastructure as Code' },
+  { job:'AI/ML Engineer', skill:'Deep Learning, TensorFlow, Model Deployment, NLP' },
+  { job:'Network Engineer', skill:'Cisco Networking, SD-WAN, Network Security' },
+  { job:'Database Administrator', skill:'SQL, PostgreSQL, Database Optimization, Backup Systems' },
+  { job:'Technical Content Writer', skill:'API Documentation, SEO Writing, Technical Blogging' },
+  { job:'SEO Specialist', skill:'Keyword Research, Link Building, Google Analytics, SEM' },
+  { job:'Digital Marketing Manager', skill:'PPC, Email Marketing, Conversion Optimization' },
+  { job:'Social Media Strategist', skill:'Community Management, Content Creation, Analytics' },
+  { job:'Brand Manager', skill:'Brand Identity, Campaign Management, Market Research' },
+  { job:'Event & Wedding Planner', skill:'Vendor Management, Budgeting, Creative Direction' },
+  { job:'Travel & Tourism Consultant', skill:'Itinerary Planning, Destination Knowledge, Sales' },
+  { job:'Hotel General Manager', skill:'Hospitality Management, Revenue Management, Guest Experience' },
+  { job:'Restaurant & F&B Manager', skill:'Operations Management, Food Safety, Team Leadership' },
+  { job:'Commercial Airline Pilot', skill:'Multi-Engine Flying, Instrument Rating, CRM' },
+  { job:'Flight Attendant & Trainer', skill:'Emergency Procedures, Customer Service, Cross-cultural Comm.' },
+  { job:'Marine Biologist', skill:'Ocean Research, Marine Conservation, Dive Certification' },
+  { job:'Environmental Scientist', skill:'Sustainability Research, Environmental Impact Assessment, GIS' },
+  { job:'Geologist', skill:'Field Mapping, Rock Analysis, Seismic Interpretation' },
+  { job:'Meteorologist', skill:'Weather Forecasting, Climate Modeling, Data Analysis' },
+  { job:'Agricultural Scientist', skill:'Crop Science, Soil Management, Agri-tech Innovation' },
+  { job:'Food Scientist', skill:'Food Safety, R&D, Sensory Analysis, Regulatory Compliance' },
+  { job:'Registered Nutritionist', skill:'Diet Planning, Clinical Nutrition, Public Health' },
+  { job:'Professional Sports Coach', skill:'Team Strategy, Athletic Conditioning, Performance Analysis' },
+  { job:'Fitness Trainer & Health Coach', skill:'Strength Training, Nutrition, Client Transformation' },
+  { job:'Physical Therapist', skill:'Musculoskeletal Rehab, Sports Medicine, Manual Therapy' },
+  { job:'Occupational Therapist', skill:'Adaptive Equipment, Cognitive Rehab, Pediatric Therapy' },
+  { job:'Speech-Language Pathologist', skill:'Language Assessment, Swallowing Therapy, AAC Devices' },
+  { job:'Radiologist', skill:'MRI/CT Reading, Diagnostic Imaging, Interventional Radiology' },
+  { job:'Anesthesiologist', skill:'Pain Management, Critical Care, Surgical Anesthesia' },
+  { job:'Cardiologist', skill:'Echocardiography, Cardiac Catheterization, Heart Failure Management' },
+  { job:'Pediatrician', skill:'Child Health, Immunizations, Developmental Assessment' },
+  { job:'Dermatologist', skill:'Skin Disease Management, Cosmetic Procedures, Laser Therapy' },
+  { job:'Ophthalmologist', skill:'Eye Surgery, Cataract Removal, Glaucoma Management' },
+  { job:'Neurologist', skill:'Brain Imaging, Neurovascular Disease, Epilepsy Management' },
+  { job:'Psychiatrist', skill:'Psychiatric Evaluation, Psychopharmacology, Mental Health Policy' },
+  { job:'Oncologist', skill:'Chemotherapy, Tumor Staging, Palliative Care' },
+  { job:'Emergency Medicine Physician', skill:'Trauma Response, Critical Care, Rapid Diagnostics' },
+  { job:'Family Medicine Physician', skill:'Primary Care, Preventive Medicine, Community Health' },
+  { job:'Public Health Officer', skill:'Health Policy, Epidemiology, Disease Surveillance' },
+  { job:'Epidemiologist', skill:'Disease Outbreak Analysis, Biostatistics, Research Design' },
+  { job:'Research Scientist', skill:'Laboratory Research, Grant Writing, Scientific Publication' },
+  { job:'Biochemist', skill:'Protein Analysis, Lab Techniques, Molecular Biology' },
+  { job:'Chemist', skill:'Analytical Chemistry, Material Synthesis, R&D' },
+  { job:'Physicist', skill:'Quantum Mechanics, Computational Physics, Research' },
+  { job:'Mathematician', skill:'Mathematical Modeling, Algorithm Design, Data Analysis' },
+  { job:'Statistician', skill:'Statistical Inference, Bayesian Analysis, R/Python' },
+  { job:'Economist', skill:'Macroeconomic Analysis, Forecasting, Policy Research' },
+  { job:'Sociologist', skill:'Social Research, Community Development, Policy Advocacy' },
+  { job:'Anthropologist', skill:'Ethnographic Research, Cultural Analysis, Field Studies' },
+  { job:'Archaeologist', skill:'Excavation, Artifact Analysis, Historical Documentation' },
+  { job:'Historian', skill:'Archival Research, Historical Writing, Documentary Production' },
+  { job:'Political Scientist', skill:'Policy Analysis, Governance Research, International Affairs' },
+  { job:'International Relations Specialist', skill:'Diplomacy, Foreign Policy, Multilateral Negotiations' },
+  { job:'Diplomat / Foreign Affairs Officer', skill:'Protocol Management, Treaty Negotiation, Cross-cultural Comm.' },
+  { job:'Government Policy Advisor', skill:'Policy Drafting, Stakeholder Engagement, Legislative Analysis' },
+  { job:'Urban & Regional Planner', skill:'Zoning, Smart City Design, Community Consultation' },
+  { job:'Land Surveyor', skill:'Geospatial Mapping, GPS Technology, Property Assessment' },
+  { job:'Quantity Surveyor', skill:'Cost Estimation, Contract Administration, Value Engineering' },
+  { job:'Safety & Health Engineer', skill:'Risk Assessment, OSHA Compliance, Emergency Planning' },
+  { job:'Quality Assurance Engineer', skill:'Testing Methodology, ISO Standards, Six Sigma' },
+  { job:'Biomedical Engineer', skill:'Medical Device Design, Clinical Engineering, R&D' },
+  { job:'Chemical Engineer', skill:'Process Design, Polymer Science, Plant Operations' },
+  { job:'Materials Engineer', skill:'Alloy Development, Failure Analysis, Nanomaterials' },
+  { job:'Aerospace Engineer', skill:'Aircraft Design, Propulsion Systems, Flight Simulation' },
+  { job:'Animation & VFX Artist', skill:'3D Modeling, Maya, Compositing, Motion Capture' },
+  { job:'Game Developer', skill:'Unity/Unreal Engine, Game Design, C++ / C#' },
+  { job:'Podcast Host & Media Producer', skill:'Audio Production, Storytelling, Audience Growth' },
+  { job:'Entrepreneur & Startup Founder', skill:'Business Development, Pitching, Product-Market Fit' },
+];
+
+const BIG_WINS_GENERAL = [
+  'You will own a successful business with international clients by your 30s.',
+  'You will receive a prestigious national award in your field of expertise.',
+  'You will publish a bestselling book that inspires thousands worldwide.',
+  'You will lead a groundbreaking research project that changes your industry.',
+  'You will become a keynote speaker at major international conferences.',
+  'You will build a team of 50+ people and run a thriving company.',
+  'You will be featured in Forbes, Time, or a major international magazine.',
+  'You will be promoted to Director or Vice President before age 35.',
+  'You will earn your PhD or Master\'s degree with honors from a top university.',
+  'You will launch a non-profit that impacts over 10,000 lives.',
+  'You will win a global innovation competition and receive a major grant.',
+  'You will be appointed as a government advisor in your field.',
+  'You will invest wisely and achieve financial independence by 40.',
+  'You will travel to 30+ countries before the age of 45.',
+  'You will hold a patent for an invention that disrupts your industry.',
+  'You will mentor the next generation as a respected professor or coach.',
+  'You will win a prestigious international scholarship and study fully funded.',
+  'You will become a certified expert recognized by a global professional body.',
+  'You will build a personal brand with a following of 50,000+ online.',
+  'You will land a dream job at one of the world\'s top 10 companies.',
+];
+
+// ============================================================
+// NAME PARSING & PROFESSION DETECTION
+// ============================================================
+function parseName(rawInput) {
+  // Extract usable first name for matching
+  // Handle: "John", "J.", "Ma. Joy", "John D. Santos Jr.", "Santos Jr."
+  const cleaned = rawInput.trim().replace(/\s+/g,' ');
+  // Get the first meaningful word (possibly dotted initial)
+  const words = cleaned.split(' ');
+  const firstName = words[0].replace(/\.$/, '').replace(/\./g,''); // strip trailing/internal dots for matching
+  return { displayName: cleaned, firstName };
+}
+
+function detectProfession(firstName, gender) {
+  const fn = firstName.toLowerCase();
+
+  // Order matters: longer prefix first
+  if (fn.startsWith('griz')) return { type:'griz' };
+  if (fn.startsWith('riz'))  return { type:'riz' };
+  if (fn.startsWith('joa'))  return { type:'joa' };
+  if (fn.startsWith('jer'))  return { type:'jer' };
+  if (fn.startsWith('mel') || fn.startsWith('lan')) return { type:'marine' };
+  if (fn.startsWith('ju'))   return { type:'ju' };
+  if (fn.startsWith('rhea') || fn.startsWith('crai') || fn.startsWith('leo')) return { type:'leo' };
+  if (fn.startsWith('ca'))   return { type:'ca' };
+  if (fn.startsWith('ro'))   return { type:'ro' };
+
+  return { type:'random' };
+}
+
+function getProfessionData(type, gender) {
+  switch(type) {
+    case 'griz':
+      return {
+        job: 'Medical Doctor',
+        skill: 'General Medicine, Patient Diagnosis, Medical Research, Clinical Leadership',
+        special: true,
+      };
+    case 'riz':
+      return {
+        job: 'Surgeon',
+        skill: 'Surgical Precision, Laparoscopic Surgery, Emergency Surgery, Operative Leadership',
+        special: true,
+      };
+    case 'joa':
+      return {
+        job: 'Engineer',
+        skill: 'Structural Design, Project Engineering, AutoCAD, Technical Problem-Solving',
+        special: true,
+      };
+    case 'jer':
+      return {
+        job: 'YouTube Content Creator',
+        skill: 'Video Production, Content Strategy, Community Building, Brand Partnerships',
+        special: true,
+        ytBigWin: true,
+      };
+    case 'marine':
+      return {
+        job: 'Marine Worker (Maritime Professional)',
+        skill: 'Navigation, Maritime Safety, Cargo Operations, International Maritime Law',
+        special: true,
+      };
+    case 'ju':
+      return {
+        job: 'Registered Nurse',
+        skill: 'Patient Care, Clinical Assessment, ICU Nursing, Healthcare Management',
+        special: true,
+      };
+    case 'leo':
+      return {
+        job: 'Military related job',
+        skill: 'Leadership under Pressure, Strategic Planning, Crisis Management, Firearms Training',
+        special: true,
+        noSchool: true,
+      };
+    case 'ca':
+      return {
+        job: 'Businessman / Entrepreneur',
+        skill: 'Business Development, Investment Strategy, Leadership, Market Expansion',
+        special: true,
+      };
+    case 'ro':
+      return {
+        job: 'Hardware Industry Professional',
+        skill: 'Hardware Engineering, Electronics R&D, PCB Design, Manufacturing Innovation',
+        special: true,
+      };
+    default: {
+      const idx = Math.floor(Math.random() * PROFESSIONS_100.length);
+      return { ...PROFESSIONS_100[idx], special: false };
+    }
+  }
+}
+
+function getBigWin(type) {
+  if (type === 'jer') {
+    const extraWins = [
+      'You will grow another channel or brand that earns six figures annually.',
+      'You will land brand deals with major international companies.',
+      'You will be invited to major YouTube Creator Summits worldwide.',
+      'You will launch a successful merchandise line loved by your fans.',
+    ];
+    const extra = extraWins[Math.floor(Math.random()*extraWins.length)];
+    return `🏆 You will reach over <span class="highlight">100,000 YouTube subscribers</span> and become a verified creator. ${extra}`;
+  }
+  if (type === 'leo') {
+    const wins = [
+      'You will have seven GF but they will be an Exes.',
+      'You will have seven GF.',
+      'You will have seven beautiful Indian GF.',
+      'You will become loyal lover despite of proposal rejection.',
+    ];
+    return `🏆 ${wins[Math.floor(Math.random()*wins.length)]}`;
+  }
+  if (type === 'ca') {
+    return '🏆 You will build a company worth millions, employ hundreds of people, and be recognized as a top entrepreneur in your industry.';
+  }
+  if (type === 'griz') {
+    return '🏆 You will become a renowned physician, publish medical research, and save thousands of lives throughout your career.';
+  }
+  if (type === 'riz') {
+    return '🏆 You will perform life-saving surgeries, become a department head, and train the next generation of surgeons.';
+  }
+  if (type === 'joa') {
+    return '🏆 You will lead a major infrastructure or technology project that serves thousands of people.';
+  }
+  if (type === 'marine') {
+    return '🏆 You will become a senior maritime officer and sail across oceans, earning international certifications and top salary.';
+  }
+  if (type === 'ju') {
+    return '🏆 You will become a Charge Nurse or Nurse Practitioner and work in a world-class hospital abroad.';
+  }
+  if (type === 'ro') {
+    return '🏆 You will patent a hardware innovation and work with global tech giants in the hardware industry.';
+  }
+  const wins = BIG_WINS_GENERAL;
+  return `🏆 ${wins[Math.floor(Math.random()*wins.length)]}`;
+}
+
+function getLoveLife(gender) {
+  const roll = Math.random();
+  if (roll < 0.05) {
+    return { never: true, text: NEVER_MARRY };
+  }
+
+  const exLine = EX_COUNT_LINES[Math.floor(Math.random()*EX_COUNT_LINES.length)];
+  const origin = LOVE_ORIGINS[Math.floor(Math.random()*LOVE_ORIGINS.length)];
+  const partnerDesc = gender === 'male'
+    ? `Your future girlfriend / wife will come from ${origin}`
+    : gender === 'female'
+    ? `Your future boyfriend / husband will come from ${origin}`
+    : `Your future partner will come from ${origin}`;
+
+  const traitsMale = ['kind and hardworking','supportive and faithful','calm and loving','funny and loyal','ambitious and caring'];
+  const traitsFemale = ['smart and nurturing','independent and warm-hearted','creative and passionate','funny and grounded','driven and affectionate'];
+  const traits = gender === 'male' ? traitsFemale : gender === 'female' ? traitsMale : [...traitsMale,...traitsFemale];
+  const trait = traits[Math.floor(Math.random()*traits.length)];
+
+  return {
+    never: false,
+    exLine,
+    partnerLine: `${partnerDesc} — ${trait}. 💑`,
+  };
+}
+
+function rand(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+
+function buildDestiny(displayName, firstName, gender) {
+  const type = detectProfession(firstName, gender).type;
+  const prof = getProfessionData(type, gender);
+  const study = rand(STUDY_COUNTRIES);
+  const live = rand(LIVE_COUNTRIES);
+  const bigWin = getBigWin(type);
+  const love = getLoveLife(gender);
+
+  return { type, prof, study, live, bigWin, love };
+}
+
+// ============================================================
+// WHEEL ANIMATION
+// ============================================================
+let currentRot = 0;
+
+function spinWheel(onDone) {
+  const canvas = document.getElementById('wheel');
+  const totalSpin = (5 + Math.random()*5) * 2 * Math.PI + Math.random()*2*Math.PI;
+  const duration = 4000 + Math.random()*1500;
+  const start = performance.now();
+  const startRot = currentRot;
+
+  function ease(t) {
+    // Ease out cubic
+    return 1 - Math.pow(1-t, 3);
+  }
+
+  function frame(now) {
+    const elapsed = now - start;
+    const t = Math.min(elapsed/duration, 1);
+    currentRot = startRot + totalSpin * ease(t);
+    drawWheel(currentRot);
+    if (t < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      onDone();
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+// ============================================================
+// CONFETTI
+// ============================================================
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+  const colors = ['#FFD700','#FF6EC7','#6c3ce1','#00D4FF','#FF4444','#44FF88','#FFFFFF'];
+
+  for(let i=0;i<180;i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*200,
+      w: 6+Math.random()*8,
+      h: 10+Math.random()*14,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      vx: (Math.random()-0.5)*6,
+      vy: 2+Math.random()*5,
+      rot: Math.random()*360,
+      rotV: (Math.random()-0.5)*8,
+      opacity: 1,
+    });
+  }
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.rot += p.rotV;
+      if(p.y > canvas.height*0.7) p.opacity -= 0.02;
+      if(p.opacity<=0) return;
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    frame++;
+    if(frame < 150) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  requestAnimationFrame(draw);
+}
+
+// ============================================================
+// REVEAL CARDS
+// ============================================================
+function revealCards(destiny, displayName) {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  document.getElementById('displayName').textContent = displayName;
+
+  const { type, prof, study, live, bigWin, love } = destiny;
+
+  const cards = [];
+
+  // Career card
+  const careerHTML = `
+    <div class="card-header">
+      <div class="card-icon">💼</div>
+      <div class="card-title">Career & Profession</div>
+    </div>
+    <div class="card-content">${prof.job}</div>
+    <div class="card-sub">
+      <strong style="color:rgba(255,215,0,0.7)">Core Skills:</strong><br>
+      ${prof.skill.split(',').map(s=>`<span class="badge">${s.trim()}</span>`).join('')}
+    </div>
+  `;
+  cards.push({ icon:'💼', html: careerHTML });
+
+  // Study card
+  let studyHTML;
+  if (type === 'mil') {
+    studyHTML = `
+      <div class="card-header">
+        <div class="card-icon">🎓</div>
+        <div class="card-title">Education & Training</div>
+      </div>
+      <div class="card-content">Military / Police Academy Training</div>
+      <div class="card-sub">You will undergo rigorous elite training programs and advance through the ranks with excellence. 🎖️</div>
+    `;
+  } else {
+    studyHTML = `
+      <div class="card-header">
+        <div class="card-icon">🎓</div>
+        <div class="card-title">Where You'll Study</div>
+      </div>
+      <div class="card-content">📍 <span class="highlight">${study.city}</span>, ${study.country}</div>
+      <div class="card-sub">You will pursue your degree at <strong>${study.school}</strong> — one of the most prestigious institutions in the world. 🌐</div>
+    `;
+  }
+  cards.push({ icon:'🎓', html: studyHTML });
+
+  // Big win card
+  const winHTML = `
+    <div class="card-header">
+      <div class="card-icon">🏆</div>
+      <div class="card-title">Your Biggest Win</div>
+    </div>
+    <div class="card-content" style="font-size:0.97rem;line-height:1.7">${bigWin}</div>
+  `;
+  cards.push({ icon:'🏆', html: winHTML });
+
+  // Love life card
+  let loveContent;
+  if (love.never) {
+    loveContent = `<div class="card-content" style="font-size:0.95rem;line-height:1.7">${love.text}</div>`;
+  } else {
+    loveContent = `
+      <div class="card-content" style="margin-bottom:10px">${love.exLine}</div>
+      <div class="card-sub">${love.partnerLine}</div>
+    `;
+  }
+  const loveHTML = `
+    <div class="card-header">
+      <div class="card-icon">❤️</div>
+      <div class="card-title">Love Life</div>
+    </div>
+    ${loveContent}
+  `;
+  cards.push({ icon:'❤️', html: loveHTML });
+
+  // Residence card
+  const liveHTML = `
+    <div class="card-header">
+      <div class="card-icon">🏠</div>
+      <div class="card-title">Where You'll Live</div>
+    </div>
+    <div class="card-content">🌍 <span class="highlight">${live}</span></div>
+    <div class="card-sub">You will build your life in one of the most beautiful and prosperous countries in the world. Your home will reflect your success. 🌟</div>
+  `;
+  cards.push({ icon:'🏠', html: liveHTML });
+
+  // Build and animate cards
+  cards.forEach((card, i) => {
+    const el = document.createElement('div');
+    el.className = 'dest-card';
+    el.innerHTML = card.html;
+    container.appendChild(el);
+    setTimeout(()=>{ el.classList.add('visible'); }, 200 + i*400);
+  });
+}
+
+// ============================================================
+// MAIN FLOW
+// ============================================================
+function startSpin() {
+  const nameVal = document.getElementById('nameInput').value.trim();
+  const errorMsg = document.getElementById('errorMsg');
+
+  if (!nameVal) {
+    errorMsg.style.display = 'block';
+    document.getElementById('nameInput').style.borderColor = '#ff6b6b';
+    setTimeout(()=>{ errorMsg.style.display='none'; document.getElementById('nameInput').style.borderColor=''; },2500);
+    return;
+  }
+
+  const gender = document.querySelector('input[name="gender"]:checked')?.value || 'others';
+  const { displayName, firstName } = parseName(nameVal);
+
+  // Show wheel
+  document.getElementById('landing-section').style.display = 'none';
+  const ws = document.getElementById('wheel-section');
+  ws.style.display = 'flex';
+
+  drawWheel(currentRot);
+
+  const spinTexts = [
+    'Consulting the universe...🔮',
+    'Reading the stars...⭐',
+    'Decoding your destiny...✨',
+    'The cosmos is aligning...🌌',
+    'Fate is speaking...💫',
+  ];
+  let textIdx = 0;
+  const textEl = document.getElementById('spinningText');
+  const textInterval = setInterval(()=>{
+    textIdx = (textIdx+1) % spinTexts.length;
+    textEl.textContent = spinTexts[textIdx];
+  }, 800);
+
+  spinWheel(()=>{
+    clearInterval(textInterval);
+    textEl.textContent = '🎉 DESTINY UNLOCKED! 🎉';
+
+    setTimeout(()=>{
+      ws.style.display = 'none';
+      const rs = document.getElementById('results-section');
+      rs.style.display = 'block';
+
+      const destiny = buildDestiny(displayName, firstName, gender);
+      revealCards(destiny, displayName);
+      launchConfetti();
+    }, 800);
+  });
+}
+
+function restart() {
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('landing-section').style.display = 'block';
+  document.getElementById('nameInput').value = '';
+  document.getElementById('cards-container').innerHTML = '';
+}
+
+// Init wheel
+drawWheel(0);
+
+// ============================================================
+// INTRO ENGINE
+// ============================================================
+(function(){
+  const introEl = document.getElementById('intro-screen');
+
+  // ---- Particle nebula canvas ----
+  const c = document.getElementById('intro-canvas');
+  let W, H, ctx2, particles2 = [], rafId;
+
+  function resizeIntroCanvas() {
+    W = c.width  = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  resizeIntroCanvas();
+  window.addEventListener('resize', resizeIntroCanvas);
+  ctx2 = c.getContext('2d');
+
+  // Create particles
+  const COLORS2 = ['#FFD700','#ff6ec7','#6c3ce1','#00d4ff','#ffffff'];
+  for(let i=0;i<90;i++){
+    particles2.push({
+      x: Math.random()*1200-100,
+      y: Math.random()*800,
+      r: 0.5 + Math.random()*2,
+      color: COLORS2[Math.floor(Math.random()*COLORS2.length)],
+      vx:(Math.random()-0.5)*0.4,
+      vy:(Math.random()-0.5)*0.4,
+      opacity: 0.2+Math.random()*0.6,
+      pulse: Math.random()*Math.PI*2,
+    });
+  }
+
+  function drawNebula(ts) {
+    ctx2.clearRect(0,0,W,H);
+    // Soft nebula blobs
+    const t = ts*0.0005;
+    [[W*0.2,H*0.3,200,'rgba(108,60,225,0.18)'],[W*0.8,H*0.7,240,'rgba(255,110,199,0.13)'],[W*0.5,H*0.5,180,'rgba(0,180,255,0.1)']].forEach(([x,y,r,c2])=>{
+      const g = ctx2.createRadialGradient(x,y,0,x,y,r+Math.sin(t)*30);
+      g.addColorStop(0,c2); g.addColorStop(1,'transparent');
+      ctx2.fillStyle=g; ctx2.fillRect(0,0,W,H);
+    });
+    // Particles
+    particles2.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      p.pulse+=0.02;
+      if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      if(p.y<-10)p.y=H+10; if(p.y>H+10)p.y=-10;
+      ctx2.beginPath();
+      ctx2.arc(p.x,p.y,p.r*(0.8+0.4*Math.sin(p.pulse)),0,Math.PI*2);
+      ctx2.fillStyle=p.color;
+      ctx2.globalAlpha=p.opacity*(0.6+0.4*Math.sin(p.pulse));
+      ctx2.fill();
+      ctx2.globalAlpha=1;
+    });
+  }
+
+  // Shooting stars
+  function shootStar() {
+    if(!document.getElementById('intro-screen')) return;
+    const el = document.createElement('div');
+    el.className='shooting-star';
+    const len = 60+Math.random()*120;
+    el.style.cssText=`
+      width:${len}px;
+      top:${Math.random()*60}%;
+      left:${Math.random()*60}%;
+      transform:rotate(${20+Math.random()*20}deg);
+      animation:shoot ${0.8+Math.random()*0.6}s linear forwards;
+    `;
+    document.getElementById('intro-screen').appendChild(el);
+    setTimeout(()=>el.remove(), 1500);
+  }
+  const shootInterval = setInterval(shootStar, 1800);
+
+  // Floating emoji particles
+  const EMOJIS = ['⭐','✨','💫','🌟','🎯','💎','🚀','🌈'];
+  function spawnFloatParticle(){
+    if(!document.getElementById('intro-screen')) return;
+    const el = document.createElement('div');
+    el.className='intro-particle';
+    const size = 14+Math.random()*18;
+    el.style.cssText=`
+      left:${Math.random()*100}%;
+      width:${size}px; height:${size}px;
+      font-size:${size}px;
+      animation-duration:${5+Math.random()*6}s;
+      animation-delay:${Math.random()*2}s;
+      background:none;
+    `;
+    el.textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+    document.getElementById('intro-screen').appendChild(el);
+    setTimeout(()=>el.remove(), 9000);
+  }
+  const particleInterval = setInterval(spawnFloatParticle, 900);
+
+  // ---- Scene orchestration ----
+  const scenes = ['scene-1','scene-2a','scene-2b','scene-2c','scene-3'];
+  const durations = [3200, 3500, 3500, 3500, 0]; // 0 = stays until clicked
+  let currentScene = -1;
+  let sceneTimeout;
+
+  function showScene(idx) {
+    if(idx >= scenes.length) return;
+    // Hide previous
+    if(currentScene >= 0) {
+      document.getElementById(scenes[currentScene]).classList.remove('active');
+    }
+    currentScene = idx;
+    const el = document.getElementById(scenes[idx]);
+    el.classList.add('active');
+
+    // Update progress dots
+    for(let i=0;i<5;i++){
+      document.getElementById('dot-'+i).classList.toggle('active', i===idx);
+    }
+
+    // Trigger inner animations
+    triggerSceneAnimations(scenes[idx]);
+
+    // Auto advance
+    if(durations[idx] > 0){
+      sceneTimeout = setTimeout(()=>showScene(idx+1), durations[idx]);
+    }
+  }
+
+  function triggerSceneAnimations(sceneId) {
+    switch(sceneId) {
+      case 'scene-1':
+        setTimeout(()=>document.getElementById('logo-line1')?.classList.add('show'), 200);
+        setTimeout(()=>document.getElementById('logo-line2')?.classList.add('show'), 500);
+        setTimeout(()=>document.getElementById('logo-tagline')?.classList.add('show'), 1200);
+        break;
+      case 'scene-2a':
+        triggerMotiv('a');
+        break;
+      case 'scene-2b':
+        triggerMotiv('b');
+        break;
+      case 'scene-2c':
+        triggerMotiv('c');
+        break;
+      case 'scene-3':
+        ['pi-1','pi-2','pi-3','pi-4','pi-5','pi-6'].forEach((id,i)=>{
+          setTimeout(()=>document.getElementById(id)?.classList.add('show'), 100+i*120);
+        });
+        break;
+    }
+  }
+
+  function triggerMotiv(suffix) {
+    setTimeout(()=>document.getElementById('motiv-head-'+suffix)?.classList.add('show'), 200);
+    setTimeout(()=>document.getElementById('motiv-line-'+suffix)?.classList.add('show'), 600);
+    setTimeout(()=>document.getElementById('motiv-body-'+suffix)?.classList.add('show'), 700);
+  }
+
+  // ---- Main loop ----
+  function introLoop(ts) {
+    drawNebula(ts);
+    if(document.getElementById('intro-screen') && !document.getElementById('intro-screen').classList.contains('exit')){
+      rafId = requestAnimationFrame(introLoop);
+    }
+  }
+
+  // Start after fonts load
+  setTimeout(()=>{
+    rafId = requestAnimationFrame(introLoop);
+    showScene(0);
+  }, 300);
+
+  // Expose skip function
+  window.skipIntro = function() {
+    clearTimeout(sceneTimeout);
+    clearInterval(shootInterval);
+    clearInterval(particleInterval);
+    cancelAnimationFrame(rafId);
+    const introEl2 = document.getElementById('intro-screen');
+    if(!introEl2) return;
+    introEl2.classList.add('exit');
+    setTimeout(()=>{
+      introEl2.remove();
+    }, 1000);
+  };
+})();
+</script>
+</body>
+</html>
